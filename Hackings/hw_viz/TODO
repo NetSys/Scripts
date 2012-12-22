@@ -1,0 +1,27 @@
+Sources:
+  Boxes:
+   https://gist.github.com/2843375
+
+  D3:
+   https://github.com/mbostock/d3/wiki/API-Reference
+
+Table:
+- Fit functions to hardware trends
+- Write Dean's numbers in terms of summations of those functions
+- take in a parameter for the year
+
+Compute boxes:
+- comparison boxes are static
+- unlike chart, keep unit boxes static
+- keep layout of metrics static
+- compute number of boxes needed
+- make algorithm for laying out boxes
+
+Visualize boxes:
+- learn d3 boxes
+
+Show javascript:
+ http://codemirror.net/
+
+Deploy:
+- Octopress blog post

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Interactive Latencies You Should Know</title>
+    <title>Interactive Numbers Every Programmer Should Know</title>
     <script src="http://codemirror.net/lib/codemirror.js"></script>
     <script src=http://codemirror.net/mode/xml/xml.js></script>
     <script src=http://codemirror.net/mode/javascript/javascript.js></script>
@@ -41,6 +41,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 
     <script>
     function getPayloadBytes() {
@@ -88,86 +89,90 @@
         // Not changing by much
         return 150000000; // ns
     }
-    function ns() {
-        return "1 ns";
+
+    // Display functions:
+    function drawBoxes(n, div, color) {
+        var cw = 100;
+        var ch = 200;
+        var rects = d3.select(div).
+         append("svg:svg").
+         attr("width", cw).
+         attr("height", ch);
+
+        var length = 10;
+        var whitespace = 2;
+
+        for (var y = 0; y < ch; y+=length) {
+            for (var x = 0; x < cw; x+=length) {
+                rects.append("svg:rect").
+                  attr("x", x).
+                  attr("y", y).
+                  attr("height", length).
+                  attr("width", length).
+                  attr("style", color);
+
+                n -= 1;
+                if (n <= 0) {
+                   return;
+                }
+            }
+        }
     }
-    function L1() {
-        var ns = getCycle();
-        return "L1 cache reference: " + ns + "ns";
-    }
-    function branch() {
-        var ns = 10*getCycle();
-        return "Branch mispredict: " + ns + "ns";
-    }
-    function L2() {
-        var ns = getL2Latency();
-        return "L2 cache reference: " + ns + "ns";
-    }
-    function mutex() {
-        var ns = 50*getCycle();
-        return "Mutex lock/unlock: " + ns + "ns";
-    }
-    function ns100() {
-        return "= 100ns";
-    }
-    function mem() {
-        var ns = getMemLatency();
-        return "Main memory reference: " + ns + "ns";
-    }
-    function micro() {
-        return "= 1 &mu;s";
-    }
-    function zippy() {
-        var ns = 6000 * getCycle();
-        var us = ns / 1000;
-        return "Compress 1KB wth Zippy: " + ns + "ns = " + us + "&mu;s";
-    }
-    function tenMicro() {
-        return "= 10 &mu;s";
-    }
-    function network() {
-        var ns = getNICTransmissionDelay(2000);
-        var us = ns / 1000;
-        return "Send 2KB over 1Gbps network: " + ns + "ns = " + us + "&mu;s";
-    }
-    function ssdRandom() {
-        var ns = getSSDLatency();
-        var us = ns / 1000;
-        return "SSD random read: " + ns + "ns = " + us + "&mu;s";
-    }
-    function mbMem() {
-        var ns = getBusTransmissionDelay(getPayloadBytes());
-        var us = ns / 1000;
-        return "Read 1MB sequentially from memory: " + ns + "ns = " + us + "&mu;s";
-    }
-    function rtt() {
-        var ns = getDCRTT();
-        var ms = ns / 1000000;
-        return "Round trip in same datacenter: " + ns + "ns = " + ms + "ms";
-    }
-    function ms() {
-        return "= 1ms";
-    }
-    function mbSSD() {
-        var ns = getSSDTransmissionDelay(getPayloadBytes());
-        var ms = ns / 1000000;
-        return "Read 1 MB sequentially from SSD: " + ns + "ns = " + ms + "ms";
-    }
-    function seek() {
-      var ns = getSeek();
-      var ms = ns / 1000000;
-      return "Disk seek: "+ ns + "ns = " + ms + "ms";
-    }
-    function mbDisk() {
-      var ns = getDiskTransmissionDelay(getPayloadBytes());
-      var ms = ns / 1000000;
-      return "Read 1MB sequentially from disk: "+ ns + "ns = " + ms + "ms";
-    }
-    function wan() {
-      var ns = getWanRTT();
-      var ms = ns / 1000000;
-      return "Packet roundtrip CA to Netherlands: "+ ns + "ns = " + ms + "ms";
-    }
+
+    function Metric(ns, boxType, displayString, div) {
+        this.ns = ns;
+        if (boxType == "ns") {
+          this.color = "stroke:#FFFFFF; fill: #000000"; // black
+          this.boxes = ns;
+        }
+        else if (boxType == "100ns") {
+          this.color = "stroke:#FFFFFF; fill: #0000FF"; // blue
+          this.boxes = ns / 100;
+          this.alternateUnit = (ns / 1000) + "&mu;s";
+        }
+        else if (boxType == "10us") {
+          this.color = "stroke:#FFFFFF; fill: #00CC00"; // green
+          this.boxes = ns / 10000;
+          this.alternateUnit = (ns / 1000) + "&mu;s";
+        }
+        else if (boxType == "ms") {
+          this.color = "stroke:#FFFFFF; fill: #FF0000"; // red
+          this.boxes = ns / 1000000;
+          this.alternateUnit = (ns / 1000000) + "ms";
+        }
+        this.displayString = displayString + this.ns + "ns " + this.alternateUnit;
+        this.div = div;
+        this.fillDiv = function() {
+          drawBoxes(this.boxes, this.div, this.color);
+          //document.getElementById(this.div).innerHTML += this.displayString;
+        }
+     }
+
+    var ns = new Metric(1, "ns", "", "ns");
+    var L1 = new Metric(getCycle(), "ns", "L1 cache reference:", "L1");
+    var branch = new Metric(10*getCycle(), "ns", "Branch mispredict:", "branch");
+    var L2 = new Metric(getL2Latency(), "ns", "L2 cache reference:", "L2");
+    var mutex = new Metric(50*getCycle(), "ns", "Mutex lock/unlock: ", "mutex");
+    var ns100 = new Metric(100, "100ns", "", "ns100");
+    var mem = new Metric(getMemLatency(), "100ns", "Main memory reference:", "mem");
+    var zippy = new Metric(6000 * getCycle(), "100ns", "Compress 1KB wth Zippy: ",
+                           "zippy");
+    var tenMicro = new Metric(100*100, "100ns", "", "tenMicro");
+    var network = new Metric(getNICTransmissionDelay(2000), "10us",
+                              "Send 2KB over 1Gbps network:", "network");
+    var ssdRandom = new Metric(getSSDLatency(), "10us", "SSD random read: ", "ssdRandom");
+    var mbMem = new Metric(getBusTransmissionDelay(getPayloadBytes()), "10us",
+                            "Read 1MB sequentially from memory:", "mbMem");
+    var rtt = new Metric(getDCRTT(), "10us", "Round trip in same datacenter: ", "rtt");
+    var ms = new Metric(100*100*100, "10us", "", "ms");
+    var mbSSD = new Metric(getSSDTransmissionDelay(getPayloadBytes()), "ms",
+                           "Read 1 MB sequentially from SSD:", "mbSSD");
+    var seek = new Metric(getSeek(), "ms", "Disk seek", "seek");
+    var mbDisk = new Metric(getDiskTransmissionDelay(getPayloadBytes()), "ms",
+                            "Read 1MB sequentially from disk:", "mbDisk");
+    var wan = new Metric(getWanRTT(), "ms", "Packet roundtrip CA to Netherlands:", "wan");
+    var metrics = new Array(ns,L1,branch,L2,mutex,ns100,mem,zippy,tenMicro,network,
+                            ssdRandom,mbMem,rtt,ms,mbSSD,seek,mbDisk,wan);
     </script>
 
     <!-- Le styles -->
@@ -187,13 +192,6 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="http://twitter.github.com/bootstrap/assets/ico/favicon.png">
   </head>
 
   <body>
@@ -251,20 +249,10 @@
 
     <!-- Fill in the columns -->
     <script>
-    function writeToDiv(divName, contents) {
-      document.getElementById(divName).innerHTML = contents
-    }
-    var divs = [["ns",ns()],["L1",L1()], ["branch",branch()], ["L2",L2()],
-                ["mutex",mutex()],["ns100", ns100()],["mem",mem()],
-                ["micro",micro()],["zippy",zippy()],["tenMicro",tenMicro()],
-                ["network",network()],["ssdRandom",ssdRandom()],
-                ["mbMem",mbMem()],["rtt",rtt()],["ms",ms()],
-                ["mbSSD",mbSSD()],["seek",seek()],["mbDisk",mbDisk()],
-                ["wan",wan()]];
-    for (var i in divs) {
-      var pair = divs[i];
-      writeToDiv(pair[0], pair[1]);
-    }
+        for (var i in metrics) {
+          var metric = metrics[i];
+          metric.fillDiv();
+        }
     </script>
 
     <!-- Le javascript
@@ -301,7 +289,8 @@
         var previewFrame = document.getElementById('preview');
         var preview = previewFrame.contentDocument || previewFrame.contentWindow.document;
         preview.open();
-        preview.write(editor.getValue());
+        var contents = editor.getValue();
+        preview.write(contents);
         preview.close();
       }
       setTimeout(updatePreview, 300);

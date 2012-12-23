@@ -107,11 +107,16 @@
 
         for (var y = 0; y < ch; y+=length) {
             for (var x = 0; x < cw; x+=length) {
+                if (n > 0 && n < 1) {
+                  var width = n * length;
+                } else {
+                  var width = length;
+                }
                 rects.append("svg:rect").
                   attr("x", x).
                   attr("y", y).
                   attr("height", length).
-                  attr("width", length).
+                  attr("width", width).
                   attr("style", color);
 
                 n -= 1;
@@ -135,8 +140,21 @@
     var green = "stroke:#FFFFFF; fill: #00CC00";
     var red = "stroke:#FFFFFF; fill: #FF0000";
 
+    function addCommas(nStr) {
+      nStr += '';
+      x = nStr.split('.');
+      x1 = x[0];
+      x2 = x.length > 1 ? '.' + x[1] : '';
+      var rgx = /(\d+)(\d{3})/;
+      while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+      }
+      return x1 + x2;
+    }
+
     function Metric(ns, boxType, displayString, div, optionalSuffix) {
         this.ns = ns;
+        this.nsDisplay = addCommas(ns);
         this.alternateUnit = "";
         if (boxType == "ns") {
           this.color = black;
@@ -144,12 +162,12 @@
         } else if (boxType == "100ns") {
           this.color = blue;
           this.boxes = ns / 100;
-          this.alternateUnit = " = " + (ns / 1000) + "&mu;s";
+          this.alternateUnit = " = " + addCommas(ns / 1000) + "&mu;s";
         } else if (boxType == "10us") {
           this.color = green;
           this.boxes = ns / 10000;
           if (displayString != "") {
-             this.alternateUnit = " = " + (ns / 1000) + "&mu;s";
+             this.alternateUnit = " = " + addCommas(ns / 1000) + "&mu;s";
           } else {
              this.alternateUnit = " = 1ms";
           }
@@ -161,7 +179,7 @@
         if (typeof optionalSuffix === "undefined") {
           optionalSuffix = "";
         }
-        this.displayString = (displayString + this.ns + "ns" +
+        this.displayString = (displayString + this.nsDisplay + "ns" +
                               this.alternateUnit + " " + optionalSuffix);
         this.div = div;
         this.fillDiv = function() {

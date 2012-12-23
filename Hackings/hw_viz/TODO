@@ -5,6 +5,42 @@ Sources:
   D3:
    https://github.com/mbostock/d3/wiki/API-Reference
 
+  Grid:
+   http://jsfiddle.net/h2yJn/66/
+
+//grid width and height
+var bw = 100;
+var bh = 100;
+//size of canvas
+var cw = bw + 1;
+var ch = bh + 1;
+
+var canvas = $('<canvas/>').attr({width: cw, height: ch}).appendTo('body');
+var context = canvas.get(0).getContext("2d");
+context.fillStyle = "rgba(0, 0, 255, .5)";
+context.fillRect(0, 0, cw, ch);
+
+function drawBoard() {
+    // vertical lines
+    for (var x = 0; x <= bw; x += 10) {
+        context.moveTo(0.5 + x, 0);
+        context.lineTo(0.5 + x, bh);
+    }
+
+
+    // horizontal lines
+    for (var x = 0; x <= bh; x += 10) {
+        context.moveTo(0, 0.5 + x);
+        context.lineTo(bw, 0.5 + x);
+    }
+
+    context.strokeStyle = "black";
+    context.stroke();
+}
+
+drawBoard();
+
+
 Table:
 - Fit functions to hardware trends
 - Write Dean's numbers in terms of summations of those functions

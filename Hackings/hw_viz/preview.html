@@ -93,8 +93,8 @@
     // Display functions:
     function drawBoxes(n, div, color) {
         var cw = 100;
-        var ch = 200;
-        var rects = d3.select(div).
+        var ch = 100;
+        var rects = d3.select("#" + div).
          append("svg:svg").
          attr("width", cw).
          attr("height", ch);
@@ -124,27 +124,28 @@
         if (boxType == "ns") {
           this.color = "stroke:#FFFFFF; fill: #000000"; // black
           this.boxes = ns;
+          this.alternateUnit = "";
         }
         else if (boxType == "100ns") {
           this.color = "stroke:#FFFFFF; fill: #0000FF"; // blue
           this.boxes = ns / 100;
-          this.alternateUnit = (ns / 1000) + "&mu;s";
+          this.alternateUnit = " = " + (ns / 1000) + "&mu;s";
         }
         else if (boxType == "10us") {
           this.color = "stroke:#FFFFFF; fill: #00CC00"; // green
           this.boxes = ns / 10000;
-          this.alternateUnit = (ns / 1000) + "&mu;s";
+          this.alternateUnit = " = " + (ns / 1000) + "&mu;s";
         }
         else if (boxType == "ms") {
           this.color = "stroke:#FFFFFF; fill: #FF0000"; // red
           this.boxes = ns / 1000000;
-          this.alternateUnit = (ns / 1000000) + "ms";
+          this.alternateUnit = " = " + (ns / 1000000) + "ms";
         }
-        this.displayString = displayString + this.ns + "ns " + this.alternateUnit;
+        this.displayString = displayString + this.ns + "ns" + this.alternateUnit;
         this.div = div;
         this.fillDiv = function() {
           drawBoxes(this.boxes, this.div, this.color);
-          //document.getElementById(this.div).innerHTML += this.displayString;
+          document.getElementById(this.div + "t").innerHTML = this.displayString;
         }
      }
 
@@ -199,49 +200,87 @@
       <h4> Latency Numbers Every Programmer Should Know</h4>
       <div class="row-fluid">
         <div class="span3">
-          <div id="ns" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="ns"></div>
+              <div class="span1" id="nst"></div>
           </div>
-          <div id="L1" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="L1"></div>
+              <div class="span1" id="L1t"></div>
           </div>
-          <div id="branch" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="branch"></div>
+              <div class="span1" id="brancht"></div>
           </div>
-          <div id="L2" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="L2"></div>
+              <div class="span1" id="L2t"></div>
           </div>
-          <div id="mutex" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="mutex"></div>
+              <div class="span1" id="mutext"></div>
           </div>
-          <div id="ns100" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="ns100"></div>
+              <div class="span1" id="ns100t"></div>
           </div>
         </div><!--First Column-->
         <div class="span3">
-          <div id="mem" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="mem"></div>
+              <div class="span1" id="memt"></div>
           </div>
-          <div id="micro" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="micro"></div>
+              <div class="span1" id="microt"></div>
           </div>
-          <div id="zippy" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="zippy"></div>
+              <div class="span1" id="zippyt"></div>
           </div>
-          <div id="tenMicro" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="tenMicro"></div>
+              <div class="span1" id="tenMicrot"></div>
           </div>
         </div><!--Second Column-->
         <div class="span3">
-          <div id="network" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="network"></div>
+              <div class="span1" id="networkt"></div>
           </div>
-          <div id="ssdRandom" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="ssdRandom"></div>
+              <div class="span1" id="ssdRandomt"></div>
           </div>
-          <div id="mbMem" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="mbMem"></div>
+              <div class="span1" id="mbMemt"></div>
           </div>
-          <div id="rtt" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="rtt"></div>
+              <div class="span1" id="rttt"></div>
           </div>
-          <div id="ms" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="ms"></div>
+              <div class="span1" id="mst"></div>
           </div>
         </div><!--Third Column-->
         <div class="span3">
-          <div id="mbSSD" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="mbSSD"></div>
+              <div class="span1" id="mbSSDt"></div>
           </div>
-          <div id="seek" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="seek"></div>
+              <div class="span1" id="seekt"></div>
           </div>
-          <div id="mbDisk" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="mbDisk"></div>
+              <div class="span1" id="mbDiskt"></div>
           </div>
-          <div id="wan" class="row-fluid">
+          <div class="row-fluid">
+              <div class="span2" id="wan"></div>
+              <div class="span1" id="want"></div>
           </div>
         </div><!--Fourth Column-->
       </div><!-- row-fluid -->

@@ -6,9 +6,3 @@ Table:
 
 Deploy:
 - Octopress blog post
-
-Bugs:
-  - spacing between metrics not quite right
-  - need comparison to next column
-  - commas in large numbers?
-

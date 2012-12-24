@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Interactive Numbers Every Programmer Should Know</title>
+    <title>Numbers Every Programmer Should Know By Year</title>
     <script src="http://codemirror.net/lib/codemirror.js"></script>
     <script src=http://codemirror.net/mode/xml/xml.js></script>
     <script src=http://codemirror.net/mode/javascript/javascript.js></script>
@@ -12,8 +12,8 @@
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
-        padding-top: 60px;
-        padding-bottom: 40px;
+        padding-top: 10px;
+        padding-bottom: 10px;
         padding-left: 10px;
         padding-right: 10px;
       }
@@ -29,7 +29,7 @@
       }
       iframe {
         width: 99%;
-        height: 400px;
+        height: 600px;
       }
     </style>
   </head>
@@ -42,8 +42,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="http://code.jquery.com/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" type="text/javascript"></script>
 
     <script>
+    var year = 2012;
     function getPayloadBytes() {
         // 1 MB
         return Math.pow(10, 6);
@@ -183,6 +187,7 @@
                               this.alternateUnit + " " + optionalSuffix);
         this.div = div;
         this.fillDiv = function() {
+          document.getElementById(this.div).innerHTML = "";
           drawBoxes(this.boxes, this.div, this.color);
           document.getElementById(this.div + "t").innerHTML = this.displayString;
         }
@@ -214,6 +219,22 @@
     var wan = new Metric(getWanRTT(), "ms", "Packet roundtrip CA to Netherlands: ", "wan");
     var metrics = new Array(ns,L1,branch,L2,mutex,ns100,mem,micro,zippy,tenMicro,network,
                             ssdRandom,mbMem,rtt,ms,mbSSD,seek,mbDisk,wan);
+
+    <!-- Slider: -->
+    $(function() {
+        $( "#slider" ).slider({
+            value: year,
+            min: 1990,
+            max: 2020,
+            step: 1,
+            slide: function( event, ui ) {
+                $( "#amount" ).val( ui.value );
+                year = ui.value;
+                render();
+            }
+        });
+        $( "#amount" ).val( $( "#slider" ).slider( "value" ) );
+    });
     </script>
 
     <!-- Le styles -->
@@ -237,7 +258,20 @@
 
   <body>
     <div class="container-fluid">
-      <h4> Latency Numbers Every Programmer Should Know</h4>
+      <div class="row-fluid">
+        <div class="span12">
+          <h4> Latency Numbers Every Programmer Should Know</h4>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span7 offset5">
+            <input type="text" id="amount" style="border: 0; font-weight: bold;" />
+        </div>
+      </div>
+      <div id="slider">
+      <div class="row-fluid">
+        <div class="span12"></div>
+      </div>
       <div class="row-fluid">
         <div class="span3">
           <div class="row-fluid">
@@ -373,28 +407,14 @@
 
     <!-- Fill in the columns -->
     <script>
-        for (var i in metrics) {
-          var metric = metrics[i];
-          metric.fillDiv();
+        function render() {
+          for (var i in metrics) {
+            var metric = metrics[i];
+            metric.fillDiv();
+          }
         }
+        render();
     </script>
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-transition.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-dropdown.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tooltip.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-popover.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-button.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-collapse.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-carousel.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-typeahead.js"></script>
   </body>
 </html>
 </textarea>

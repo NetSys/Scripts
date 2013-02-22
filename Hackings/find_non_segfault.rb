@@ -33,7 +33,7 @@ end
     output.print generate_source(i)
     output.close
     
-    system "gcc -Wall -o test test.c"
+    system "gcc -Wall -o test function_ptr_madness.c"
     if `./test 2>&1` !~ /Segmentation fault/
         puts i
     end
